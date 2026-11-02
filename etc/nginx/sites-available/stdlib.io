@@ -212,6 +212,28 @@ server {
   # [1]: http://nginx.org/en/docs/http/ngx_http_core_module.html#error_page
   error_page 404 /404.html;
 
+  # Define a location directive for serving API documentation package data.
+  #
+  # ## Notes
+  #
+  # -   This location must precede `common.conf`, as nginx uses the first matching regular expression location.
+  #
+  location ~* ^/docs/api/[a-z0-9.\-_]+/package/[a-z\-]+\.json$ {
+    # Allow cross-origin reads, such as from a translation proxy.
+    #
+    # ## Notes
+    #
+    # -   A location having its own `add_header` directives does not inherit others, so we must repeat the `Cache-Control` header from `expires.conf`.
+    #
+    # ## Usage
+    #
+    # Syntax: `add_header name value [always];`
+    #
+    # [1]: https://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+    add_header Cache-Control "max-age=0";
+    add_header Access-Control-Allow-Origin "*";
+  }
+
   # Include common configuration rules:
   include common.conf;
 

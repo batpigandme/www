@@ -151,6 +151,9 @@ function handler( request, reply ) {
 	// Check whether we should serve a package's README as a fragment or as part of a rendered application...
 	if ( f === 'index' && request.query.fragment ) {
 		request.log.info( 'Requested a fragment.' );
+
+		// Allow cross-origin reads, such as from a translation proxy:
+		reply.header( 'Access-Control-Allow-Origin', '*' );
 		return reply.send( fs.createReadStream( p, FOPTS ) );
 	}
 	// We need to serve a rendered application...
